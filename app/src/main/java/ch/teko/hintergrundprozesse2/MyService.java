@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class MyService extends Service {
     private static final String LOG_TAG = "MyService";
-    private final String defaultUrl = "http://transport.opendata.ch/v1/locations?query=";
+    private final String defaultUrl = "https://transport.opendata.ch/v1/locations?query=";
     IBinder myBinder = new MyBinder(); // binder given to client
 
     private String urlStr;
@@ -62,7 +62,7 @@ public class MyService extends Service {
 
     @Override
     // never called, due to bindService() without startService()
-    //todo for test => delete
+    //todo for test
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG,"onStartCommand() called");
         return super.onStartCommand(intent, flags, startId);
@@ -80,41 +80,52 @@ public class MyService extends Service {
         Log.d(LOG_TAG, "getTransportsJsonStr() called");
         Log.d(LOG_TAG, "locationUserInput = " + locationUserInput);
 
-//        todo ??
+        this.locationUserInput = locationUserInput; // todo for test
+        Log.d(LOG_TAG, this.locationUserInput); // todo for test
+
         urlStr = defaultUrl + locationUserInput;
+        Log.d(LOG_TAG, "url = " + urlStr);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 String transportsJsonStr = "transportsJsonStr";
-                //todo make connection work
-//                try {
-//                    InputStream inputStream = new URL(urlStr).openStream();
+                //todo: if userInput is not location in switzerland (no response from url)
+                try {
+                    InputStream inputStream = new URL(urlStr).openStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+
+//                    URL url = new URL(urlStr);
+//                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+////                    conn.connect();
+//                    InputStream inputStream = conn.getInputStream();
 //                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-//
-//                    StringBuffer transportsJsonBuffer = new StringBuffer();
-//                    String line;
-//                    while ((line = bufferedReader.readLine()) != null) {
-//                        transportsJsonBuffer.append(line);
-//                    }
-//                    transportsJsonStr = transportsJsonBuffer.toString();
-//
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                    //todo
-//                    transportsJsonStr = "MalformedURLException";
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    //todo
-//                    transportsJsonStr = "IOException";
-//                } catch (NullPointerException e) {
-//                    e.printStackTrace();
-//                    //todo
-//                    transportsJsonStr = "NullPointerException";
-//                }
+
+                    StringBuffer transportsJsonBuffer = new StringBuffer();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        transportsJsonBuffer.append(line);
+                    }
+                    transportsJsonStr = transportsJsonBuffer.toString();
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    //todo
+                    transportsJsonStr = "MalformedURLException";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //todo
+                    transportsJsonStr = "IOException";
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                    //todo
+                    transportsJsonStr = "NullPointerException";
+                }
                 Log.d(LOG_TAG, transportsJsonStr);
             }
         }).start();
+
+
     }
     // test Method for client
     //todo for test

@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName className) {
             Log.d(LOG_TAG, "onServiceDisconnected() called from ServiceConnection object");
-            unbindService(connection);
+//            unbindService(this);
+            myService = null;
             isBound = false;
             Log.d(LOG_TAG, "isBound = " + isBound);
         }
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "onStop() called");
         super.onStop();
         if (isBound) {
-            unbindService(connection);
+            unbindService(connection); // MyService, onDestroy() called
             isBound = false;
         }
     }
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonUnbindClicked(View view) {
         Log.d(LOG_TAG, "onButtonUnbindClicked() called");
         if(isBound) {
-            unbindService(connection);
+            unbindService(connection); // MyService, onDestroy() called
             isBound = false;
         } else {
             Toast.makeText(getApplicationContext(), "already unbound", Toast.LENGTH_LONG).show();
