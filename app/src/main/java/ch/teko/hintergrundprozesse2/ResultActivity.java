@@ -6,9 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.ArrayList;
-
-import ch.teko.hintergrundprozesse2.Transport;
 
 public class ResultActivity extends AppCompatActivity {
 

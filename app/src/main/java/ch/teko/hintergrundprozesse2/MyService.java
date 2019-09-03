@@ -86,36 +86,36 @@ public class MyService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String transportsJsonStr;
-                try {
-                    InputStream inputStream = new URL(urlStr).openStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-                    StringBuffer transportsJsonBuffer = new StringBuffer();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        transportsJsonBuffer.append(line);
-                    }
-                    transportsJsonStr = transportsJsonBuffer.toString();
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    //todo
-                    transportsJsonStr = "MalformedURLException";
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    //todo
-                    transportsJsonStr = "IOException";
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    //todo
-                    transportsJsonStr = "NullPointerException";
-                }
+                String transportsJsonStr = "transportsJsonStr";
+                //todo make connection work
+//                try {
+//                    InputStream inputStream = new URL(urlStr).openStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+//
+//                    StringBuffer transportsJsonBuffer = new StringBuffer();
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        transportsJsonBuffer.append(line);
+//                    }
+//                    transportsJsonStr = transportsJsonBuffer.toString();
+//
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                    //todo
+//                    transportsJsonStr = "MalformedURLException";
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    //todo
+//                    transportsJsonStr = "IOException";
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                    //todo
+//                    transportsJsonStr = "NullPointerException";
+//                }
                 Log.d(LOG_TAG, transportsJsonStr);
             }
         }).start();
     }
-
     // test Method for client
     //todo for test
     int getRandom() {

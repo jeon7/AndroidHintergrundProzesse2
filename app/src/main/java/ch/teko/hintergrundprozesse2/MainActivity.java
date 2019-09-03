@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(isBound) {
             locationUserInput = findViewById(R.id.editText_location);
-            myService.getTransportsJson(locationUserInput.getText().toString());;
+            myService.getTransportsJson(locationUserInput.getText().toString());
 
             //            todo:
 //                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
