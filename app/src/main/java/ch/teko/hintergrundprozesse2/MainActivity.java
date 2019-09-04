@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "MainActivity";
     MyService myService;
+    Intent serviceIntent;
     boolean isBound = false;
     EditText locationUserInput;
 
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(LOG_TAG, "onStart() called");
         super.onStart();
-        Intent intent = new Intent(this, MyService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        serviceIntent = new Intent(this, MyService.class);
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -81,26 +82,24 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    // process user input
     public void onButtonOkClicked(View view) {
         Log.d(LOG_TAG, "onButtonOkClicked() called");
+        Log.d(LOG_TAG, "isBound = " + isBound);
 
-        if(isBound) {
-            locationUserInput = findViewById(R.id.editText_location);
-            myService.getTransportsJson(locationUserInput.getText().toString());
-
-            //            todo:
-//                Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
-//                intent.putExtra("transportsJsonStr", transportsJsonStr);
-//                startActivity(intent);
-
-
-        } else {
-//            locationUserInput = findViewById(R.id.editText_location); //todo for test
-//            transportsJsonStr = myService.getTransportsJsonStr(locationUserInput.getText().toString()); //todo for test
-//            Log.d(LOG_TAG, transportsJsonStr);  //todo for test
-//            Toast.makeText(getApplicationContext(),
-//                    "not connected to MyService. please refresh the page", Toast.LENGTH_LONG).show();
+        if(!isBound) {
+            bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE);
         }
+
+        // get transportsJsonStr from user input from bound Service
+        locationUserInput = findViewById(R.id.editText_location);
+        String transportsJsonStr = myService.getTransportsJson(locationUserInput.getText().toString());
+        Log.d(LOG_TAG, "transportsJsonStr from MyService: " + transportsJsonStr);
+
+        // send transportsJasonStr to ResultActivity
+        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+        intent.putExtra("transportsJsonStr", transportsJsonStr);
+        startActivity(intent);
     }
 
     //todo

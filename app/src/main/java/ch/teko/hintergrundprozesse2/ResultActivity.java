@@ -6,6 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -22,25 +28,78 @@ public class ResultActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(LOG_TAG, "onStart() called");
         super.onStart();
+
+        Intent intent = getIntent();
+        processIntent(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Log.d(LOG_TAG, "onActivityResult() called");
-        super.onActivityResult(requestCode, resultCode, data);
-//        ArrayList<Transport> transportList = (ArrayList)data.getExtras().getSerializable("transportList");
-        //        todo: test
-//        for (int i = 0; i < transportList.size(); i++) {
-//            Log.d(LOG_TAG, transportList.get(i).getId());
-//            Log.d(LOG_TAG, transportList.get(i).getName());
-//            Log.d(LOG_TAG, transportList.get(i).getScore());
-//            Log.d(LOG_TAG, transportList.get(i).getCoordinate_type());
-//            Log.d(LOG_TAG, transportList.get(i).getCoordinate_x());
-//            Log.d(LOG_TAG, transportList.get(i).getCoordinate_y());
-//            Log.d(LOG_TAG, transportList.get(i).getDistance());
-//            Log.d(LOG_TAG, transportList.get(i).getIcon());
-//            Log.d(LOG_TAG, " ");
-//        }
+    private void processIntent(Intent intent) {
+        Log.d(LOG_TAG, "processIntent() called");
+
+        if (intent != null) {
+            String transportsJsonStr = intent.getExtras().getString("transportsJsonStr");
+            Log.d(LOG_TAG, transportsJsonStr);
+
+            ArrayList<Transport> transportsList = parseJson(transportsJsonStr);
+
+            //        todo: for test
+            for (int i = 0; i < transportsList.size(); i++) {
+                Log.d(LOG_TAG, transportsList.get(i).getId());
+                Log.d(LOG_TAG, transportsList.get(i).getName());
+                Log.d(LOG_TAG, transportsList.get(i).getScore());
+                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_type());
+                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_x());
+                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_y());
+                Log.d(LOG_TAG, transportsList.get(i).getDistance());
+                Log.d(LOG_TAG, transportsList.get(i).getIcon());
+                Log.d(LOG_TAG, " ");
+            }
+
+
+        }
+    }
+
+    private ArrayList<Transport> parseJson(String transportsJsonStr) {
+        Log.d(LOG_TAG, "parseJson() called");
+        ArrayList<Transport> transportList = new ArrayList();
+
+        try {
+            JSONObject jsonObject = new JSONObject(transportsJsonStr);
+            JSONArray jsonArray = jsonObject.getJSONArray("stations");
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject stationInfo = jsonArray.getJSONObject(i);
+                //todo test
+                Log.d(LOG_TAG, stationInfo.toString());
+
+                String id = stationInfo.getString("id");
+                String name = stationInfo.getString("name");
+                String score = stationInfo.getString("score");
+
+                String coordinate_type = stationInfo.getJSONObject("coordinate").getString("type");
+                String coordinate_x = stationInfo.getJSONObject("coordinate").getString("x");
+                String coordinate_y = stationInfo.getJSONObject("coordinate").getString("y");
+
+                String distance = stationInfo.getString("distance");
+                String icon = stationInfo.getString("icon");
+
+                Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y, distance, icon);
+                transportList.add(transport);
+
+//                todo: for test
+                Log.d(LOG_TAG, "\nid: " + id +
+                        "\nname: " + name +
+                        "\nscore: " + score +
+                        "\ncoordinate_type: " + coordinate_type +
+                        "\ncoordinate_x: " + coordinate_x +
+                        "\ncoordinate_y: " + coordinate_y +
+                        "\ndistance: " + distance +
+                        "\nicon: " + icon);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return transportList;
     }
 
     @Override

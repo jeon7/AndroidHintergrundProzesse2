@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 
@@ -22,7 +24,8 @@ public class MyService extends Service {
     private final String defaultUrl = "https://transport.opendata.ch/v1/locations?query=";
     IBinder myBinder = new MyBinder(); // binder given to client
 
-    private String urlStr;
+    String urlStr; // for communication thread
+    String transportsJsonStr = "transportsJsonStr";
     String locationUserInput; // todo for test
 
     //     inner Class used for the client binder
@@ -76,7 +79,7 @@ public class MyService extends Service {
 
     // Method for client
     //      todo, if user input is not for transportAPI
-    public void getTransportsJson(String locationUserInput) {
+    public String getTransportsJson(String locationUserInput) {
         Log.d(LOG_TAG, "getTransportsJsonStr() called");
         Log.d(LOG_TAG, "locationUserInput = " + locationUserInput);
 
@@ -86,10 +89,11 @@ public class MyService extends Service {
         urlStr = defaultUrl + locationUserInput;
         Log.d(LOG_TAG, "url = " + urlStr);
 
-        new Thread(new Runnable() {
+
+        Thread communicationThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String transportsJsonStr = "transportsJsonStr";
+
                 //todo: if userInput is not location in switzerland (no response from url)
                 try {
                     InputStream inputStream = new URL(urlStr).openStream();
@@ -97,7 +101,7 @@ public class MyService extends Service {
 
 //                    URL url = new URL(urlStr);
 //                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-////                    conn.connect();
+//                    conn.connect();
 //                    InputStream inputStream = conn.getInputStream();
 //                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 
@@ -106,8 +110,13 @@ public class MyService extends Service {
                     while ((line = bufferedReader.readLine()) != null) {
                         transportsJsonBuffer.append(line);
                     }
+
                     transportsJsonStr = transportsJsonBuffer.toString();
 
+                }catch(UnknownHostException e) {
+                    e.printStackTrace();
+                    //todo
+                    transportsJsonStr = "UnknownHostException";
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     //todo
@@ -123,10 +132,20 @@ public class MyService extends Service {
                 }
                 Log.d(LOG_TAG, transportsJsonStr);
             }
-        }).start();
+        });
 
+         communicationThread.start();
 
+         // *** wait until the communicationThread to get transportsJsonStr from url
+        try {
+            communicationThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return transportsJsonStr;
     }
+
     // test Method for client
     //todo for test
     int getRandom() {
@@ -138,4 +157,5 @@ public class MyService extends Service {
     String getCity() {
         return locationUserInput;
     }
+
 }
