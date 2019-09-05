@@ -1,8 +1,9 @@
 package ch.teko.hintergrundprozesse2;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -30,17 +31,20 @@ public class ResultActivity extends AppCompatActivity {
         super.onStart();
 
         Intent intent = getIntent();
-        processIntent(intent);
+        ArrayList<Transport> transportsList = processIntent(intent);
+        displayTransports(transportsList);
     }
 
-    private void processIntent(Intent intent) {
+    private ArrayList<Transport> processIntent(Intent intent) {
         Log.d(LOG_TAG, "processIntent() called");
+
+        ArrayList<Transport> transportsList = null;
 
         if (intent != null) {
             String transportsJsonStr = intent.getExtras().getString("transportsJsonStr");
             Log.d(LOG_TAG, transportsJsonStr);
 
-            ArrayList<Transport> transportsList = parseJson(transportsJsonStr);
+            transportsList = parseJson(transportsJsonStr);
 
             //        todo: for test
             for (int i = 0; i < transportsList.size(); i++) {
@@ -52,11 +56,12 @@ public class ResultActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, transportsList.get(i).getCoordinate_y());
                 Log.d(LOG_TAG, transportsList.get(i).getDistance());
                 Log.d(LOG_TAG, transportsList.get(i).getIcon());
+                Log.d(LOG_TAG, String.valueOf(transportsList.get(i).getDrawableId()));
                 Log.d(LOG_TAG, " ");
             }
-
-
         }
+
+        return transportsList;
     }
 
     private ArrayList<Transport> parseJson(String transportsJsonStr) {
@@ -83,7 +88,26 @@ public class ResultActivity extends AppCompatActivity {
                 String distance = stationInfo.getString("distance");
                 String icon = stationInfo.getString("icon");
 
-                Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y, distance, icon);
+                int drawableId;
+
+                // set icon for view
+                int drawableIdTrain = R.drawable.train;
+                int drawableIdBus = R.drawable.bus;
+                int drawableIdTram = R.drawable.tram;
+                int drawableIdUnknown = R.drawable.question_mark;
+
+                if(icon.equals("train")) {
+                    drawableId = drawableIdTrain;
+                } else if(icon.equals("bus")) {
+                    drawableId = drawableIdBus;
+                } else if(icon.equals("tram")) {
+                    drawableId = drawableIdTram;
+                } else {
+                    drawableId = drawableIdUnknown;
+                }
+
+                Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y,
+                        distance, icon, drawableId);
                 transportList.add(transport);
 
 //                todo: for test
@@ -94,12 +118,23 @@ public class ResultActivity extends AppCompatActivity {
                         "\ncoordinate_x: " + coordinate_x +
                         "\ncoordinate_y: " + coordinate_y +
                         "\ndistance: " + distance +
-                        "\nicon: " + icon);
+                        "\nicon: " + icon +
+                        "\ndrawableId: " + drawableId);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return transportList;
+    }
+
+    // 리사이클러뷰에 LinearLayoutManager 객체 지정.
+    private void displayTransports(ArrayList<Transport> transportsList) {
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        MyAdpater myAdpater = new MyAdpater(transportsList);
+        recyclerView.setAdapter(myAdpater);
     }
 
     @Override

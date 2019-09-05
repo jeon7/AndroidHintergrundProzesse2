@@ -10,8 +10,11 @@ public class Transport {
     private String coordinate_y;
     private String distance;
     private String icon;
+    private int drawableId;
 
-    public Transport(String id, String name, String score, String coordinate_type, String coordinate_x, String coordinate_y, String distance, String icon) {
+
+    public Transport(String id, String name, String score, String coordinate_type, String coordinate_x, String coordinate_y,
+                     String distance, String icon, int drawableId) {
         this.id = id;
         this.name = name;
         this.score = score;
@@ -20,6 +23,7 @@ public class Transport {
         this.coordinate_y = coordinate_y;
         this.distance = distance;
         this.icon = icon;
+        this.drawableId = drawableId;
     }
 
     public String getId() {
@@ -53,4 +57,9 @@ public class Transport {
     public String getIcon() {
         return icon;
     }
+
+    public int getDrawableId() {
+        return drawableId;
+    }
+
 }
