@@ -1,6 +1,5 @@
 package ch.teko.hintergrundprozesse2;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +15,19 @@ public class MyAdpater extends RecyclerView.Adapter<MyAdpater.MyViewHolder>{
 
     private static final String LOG_TAG = "MyAdpater";
     private ArrayList<Transport> transportsList = null;
+
+    // custom interface for Click event in recyclerView (see MyViewHolder constructor and ResultActivity)
+    // in order to use activity method.
+    public interface OnItemClickListener {
+        void onItemClick(View v, int position);
+    }
+
+    private OnItemClickListener myListener = null;
+
+
+    public void setOnItemClickListner(OnItemClickListener listner) {
+        this.myListener = listner;
+    }
 
     // inner ViewHolder class
     // 아이템 뷰를 저장하는 뷰홀더 클래스
@@ -34,6 +46,20 @@ public class MyAdpater extends RecyclerView.Adapter<MyAdpater.MyViewHolder>{
 
             tv_name = itemView.findViewById(R.id.tv_name);
             iv_icon = itemView.findViewById(R.id.iv_icon);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // ??
+                        if(myListener != null) {
+                            myListener.onItemClick(v,pos);
+
+                        }
+                    }
+                }
+            });
         }
     }
 

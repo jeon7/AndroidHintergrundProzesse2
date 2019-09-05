@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +19,10 @@ public class ResultActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "ResultActivity";
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter myAdapter;
+    private MyAdpater myAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    public ArrayList<Transport> transportsList;
 
 
     @Override
@@ -35,20 +38,32 @@ public class ResultActivity extends AppCompatActivity {
         super.onStart();
 
         Intent intent = getIntent();
-        ArrayList<Transport> transportsList = processIntent(intent);
+        processIntent(intent);
         displayTransports(transportsList);
+
+        myAdapter.setOnItemClickListner(new MyAdpater.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v,int pos){
+                Transport transport = transportsList.get(pos);
+                String name = transport.getName();
+                String coordinate_x = transport.getCoordinate_x();
+                String coordinate_y = transport.getCoordinate_y();
+
+                Log.d(LOG_TAG, "name: " + name);
+                Log.d(LOG_TAG, "coordinate_x: " + coordinate_x);
+                Log.d(LOG_TAG, "coordinate_y: " + coordinate_y);
+            }
+        });
     }
 
-    private ArrayList<Transport> processIntent(Intent intent) {
+    private void processIntent(Intent intent) {
         Log.d(LOG_TAG, "processIntent() called");
-
-        ArrayList<Transport> transportsList = null;
 
         if (intent != null) {
             String transportsJsonStr = intent.getExtras().getString("transportsJsonStr");
             Log.d(LOG_TAG, transportsJsonStr);
 
-            transportsList = parseJson(transportsJsonStr);
+            parseJson(transportsJsonStr);
 
             //        todo: for test
             for (int i = 0; i < transportsList.size(); i++) {
@@ -64,13 +79,11 @@ public class ResultActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, " ");
             }
         }
-
-        return transportsList;
     }
 
-    private ArrayList<Transport> parseJson(String transportsJsonStr) {
+    private void parseJson(String transportsJsonStr) {
         Log.d(LOG_TAG, "parseJson() called");
-        ArrayList<Transport> transportList = new ArrayList();
+        transportsList = new ArrayList();
 
         try {
             JSONObject jsonObject = new JSONObject(transportsJsonStr);
@@ -90,45 +103,65 @@ public class ResultActivity extends AppCompatActivity {
                 String coordinate_y = stationInfo.getJSONObject("coordinate").getString("y");
 
                 String distance = stationInfo.getString("distance");
-                String icon = stationInfo.getString("icon");
-
-                int drawableId;
+                String icon;
 
                 // set icon for view
                 int drawableIdTrain = R.drawable.train;
                 int drawableIdBus = R.drawable.bus;
                 int drawableIdTram = R.drawable.tram;
                 int drawableIdUnknown = R.drawable.question_mark;
+                int drawableId;
 
-                if(icon.equals("train")) {
-                    drawableId = drawableIdTrain;
-                } else if(icon.equals("bus")) {
-                    drawableId = drawableIdBus;
-                } else if(icon.equals("tram")) {
-                    drawableId = drawableIdTram;
+                if(stationInfo.has("icon")) {
+                    icon = stationInfo.getString("icon");
+
+                    if(icon.equals("train")) {
+                        drawableId = drawableIdTrain;
+                    } else if(icon.equals("bus")) {
+                        drawableId = drawableIdBus;
+                    } else if(icon.equals("tram")) {
+                        drawableId = drawableIdTram;
+                    } else {
+                        drawableId = drawableIdUnknown;
+                    }
+
+                    Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y,
+                            distance, icon, drawableId);
+                    transportsList.add(transport);
+
+                    //                todo: for test
+                    Log.d(LOG_TAG, "\nid: " + id +
+                            "\nname: " + name +
+                            "\nscore: " + score +
+                            "\ncoordinate_type: " + coordinate_type +
+                            "\ncoordinate_x: " + coordinate_x +
+                            "\ncoordinate_y: " + coordinate_y +
+                            "\ndistance: " + distance +
+                            "\nicon: " + icon +
+                            "\ndrawableId: " + drawableId);
                 } else {
+                    icon = "no json object";
                     drawableId = drawableIdUnknown;
+
+                    Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y,
+                            distance, icon, drawableId);
+                    transportsList.add(transport);
+
+                    //                todo: for test
+                    Log.d(LOG_TAG, "\nid: " + id +
+                            "\nname: " + name +
+                            "\nscore: " + score +
+                            "\ncoordinate_type: " + coordinate_type +
+                            "\ncoordinate_x: " + coordinate_x +
+                            "\ncoordinate_y: " + coordinate_y +
+                            "\ndistance: " + distance +
+                            "\nicon: " + icon +
+                            "\ndrawableId: " + drawableId);
                 }
-
-                Transport transport = new Transport(id,name, score, coordinate_type, coordinate_x, coordinate_y,
-                        distance, icon, drawableId);
-                transportList.add(transport);
-
-//                todo: for test
-                Log.d(LOG_TAG, "\nid: " + id +
-                        "\nname: " + name +
-                        "\nscore: " + score +
-                        "\ncoordinate_type: " + coordinate_type +
-                        "\ncoordinate_x: " + coordinate_x +
-                        "\ncoordinate_y: " + coordinate_y +
-                        "\ndistance: " + distance +
-                        "\nicon: " + icon +
-                        "\ndrawableId: " + drawableId);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return transportList;
     }
 
     // 리사이클러뷰에 LinearLayoutManager 객체 지정.

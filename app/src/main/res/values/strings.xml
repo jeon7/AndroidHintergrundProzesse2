@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hintergrundprozesse2</string>
+        <string name="app_name">Schweizer öV</string>
     <string name="main_description" translatable="false">Bitte geben Sie eine Ortschaft in der Schweiz unten ein. öv wird dargestellt. </string>
     <string name="main_button_ok" translatable="false">OK</string>
 </resources>
