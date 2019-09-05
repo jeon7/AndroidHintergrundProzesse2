@@ -17,6 +17,10 @@ import java.util.ArrayList;
 public class ResultActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "ResultActivity";
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter myAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,12 +133,14 @@ public class ResultActivity extends AppCompatActivity {
 
     // 리사이클러뷰에 LinearLayoutManager 객체 지정.
     private void displayTransports(ArrayList<Transport> transportsList) {
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        MyAdpater myAdpater = new MyAdpater(transportsList);
-        recyclerView.setAdapter(myAdpater);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        myAdapter = new MyAdpater(transportsList);
+        recyclerView.setAdapter(myAdapter);
     }
 
     @Override

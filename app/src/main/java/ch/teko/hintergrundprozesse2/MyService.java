@@ -30,7 +30,7 @@ public class MyService extends Service {
 
     //     inner Class used for the client binder
     public class MyBinder extends Binder {
-        private static final String LOG_TAG = "MyBinder in MyService";
+        String LOG_TAG = "MyBinder in MyService";
 
         public MyBinder(){
             Log.d(LOG_TAG, "MyBinder() created");
