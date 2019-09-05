@@ -1,5 +1,5 @@
 <resources>
-        <string name="app_name">Schweizer öV</string>
-    <string name="main_description" translatable="false">Bitte geben Sie eine Ortschaft in der Schweiz unten ein. öv wird dargestellt. </string>
+        <string name="app_name">Swiss Geo</string>
+    <string name="main_description" translatable="false">Please enter a valid place in switzerland. Public transportation will be displayed. </string>
     <string name="main_button_ok" translatable="false">OK</string>
 </resources>

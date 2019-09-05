@@ -29,20 +29,8 @@ public class Transport {
         this.drawableId = drawableId;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public String getCoordinate_type() {
-        return coordinate_type;
     }
 
     public String getCoordinate_x() {
@@ -51,14 +39,6 @@ public class Transport {
 
     public String getCoordinate_y() {
         return coordinate_y;
-    }
-
-    public String getDistance() {
-        return distance;
-    }
-
-    public String getIcon() {
-        return icon;
     }
 
     public int getDrawableId() {

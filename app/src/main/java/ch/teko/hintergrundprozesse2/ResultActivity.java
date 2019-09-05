@@ -1,17 +1,16 @@
 package ch.teko.hintergrundprozesse2;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 
@@ -21,9 +20,7 @@ public class ResultActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MyAdpater myAdapter;
     private RecyclerView.LayoutManager layoutManager;
-
     public ArrayList<Transport> transportsList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,21 +36,6 @@ public class ResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         processIntent(intent);
-        displayTransports(transportsList);
-
-        myAdapter.setOnItemClickListner(new MyAdpater.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v,int pos){
-                Transport transport = transportsList.get(pos);
-                String name = transport.getName();
-                String coordinate_x = transport.getCoordinate_x();
-                String coordinate_y = transport.getCoordinate_y();
-
-                Log.d(LOG_TAG, "name: " + name);
-                Log.d(LOG_TAG, "coordinate_x: " + coordinate_x);
-                Log.d(LOG_TAG, "coordinate_y: " + coordinate_y);
-            }
-        });
     }
 
     private void processIntent(Intent intent) {
@@ -64,6 +46,32 @@ public class ResultActivity extends AppCompatActivity {
             Log.d(LOG_TAG, transportsJsonStr);
 
             parseJson(transportsJsonStr);
+            displayTransports(transportsList);
+
+            myAdapter.setOnItemClickListner(new MyAdpater.OnItemClickListener() {
+                @Override
+                public void onItemClick(View v,int pos){
+
+                    Transport transport = transportsList.get(pos);
+                    String name = transport.getName();
+                    String coordinate_x = transport.getCoordinate_x();
+                    String coordinate_y = transport.getCoordinate_y();
+
+                    Log.d(LOG_TAG, "name: " + name);
+                    Log.d(LOG_TAG, "coordinate_x: " + coordinate_x);
+                    Log.d(LOG_TAG, "coordinate_y: " + coordinate_y);
+
+                    Uri gmmIntentUri = Uri.parse("geo:" + coordinate_x + "," + coordinate_y + "?q=" +
+                                                Uri.encode(name));
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    if (mapIntent.resolveActivity(getPackageManager()) != null &&
+                        coordinate_x != null &&
+                        coordinate_y != null) {
+                        startActivity(mapIntent);
+                    }
+                }
+            });
         }
     }
 
@@ -83,7 +91,6 @@ public class ResultActivity extends AppCompatActivity {
 
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject stationInfo = jsonArray.getJSONObject(i);
-                //todo test
                 Log.d(LOG_TAG, stationInfo.toString());
 
                 String id = stationInfo.getString("id");
@@ -121,7 +128,6 @@ public class ResultActivity extends AppCompatActivity {
                             distance, icon, drawableId);
                     transportsList.add(transport);
 
-                    //                todo: for test
                     Log.d(LOG_TAG, "\nid: " + id +
                             "\nname: " + name +
                             "\nscore: " + score +
@@ -139,7 +145,6 @@ public class ResultActivity extends AppCompatActivity {
                             distance, icon, drawableId);
                     transportsList.add(transport);
 
-                    //                todo: for test
                     Log.d(LOG_TAG, "\nid: " + id +
                             "\nname: " + name +
                             "\nscore: " + score +
@@ -168,27 +173,4 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView.setAdapter(myAdapter);
     }
 
-    @Override
-    protected void onResume() {
-        Log.d(LOG_TAG, "onResume() called");
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(LOG_TAG, "onPause() called");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(LOG_TAG, "onStop() called");
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d(LOG_TAG, "onDestroy() called");
-        super.onDestroy();
-    }
 }

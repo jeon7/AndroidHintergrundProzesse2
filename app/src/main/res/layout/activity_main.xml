@@ -42,42 +42,10 @@
         android:layout_height="wrap_content"
         android:onClick="onButtonOkClicked"
         android:text="@string/main_button_ok"
-        app:layout_constraintBottom_toTopOf="@+id/btn_city"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText_location" />
 
-    <Button
-        android:id="@+id/btn_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:onClick="onButtonNumClicked"
-        android:text="get number"
-        app:layout_constraintBottom_toTopOf="@+id/btn_unbind"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_city"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:onClick="onButtonCityClicked"
-        android:text="get city"
-        app:layout_constraintBottom_toTopOf="@+id/btn_num"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_unbind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:onClick="onButtonUnbindClicked"
-        android:text="unbind"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
