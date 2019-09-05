@@ -64,20 +64,6 @@ public class ResultActivity extends AppCompatActivity {
             Log.d(LOG_TAG, transportsJsonStr);
 
             parseJson(transportsJsonStr);
-
-            //        todo: for test
-            for (int i = 0; i < transportsList.size(); i++) {
-                Log.d(LOG_TAG, transportsList.get(i).getId());
-                Log.d(LOG_TAG, transportsList.get(i).getName());
-                Log.d(LOG_TAG, transportsList.get(i).getScore());
-                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_type());
-                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_x());
-                Log.d(LOG_TAG, transportsList.get(i).getCoordinate_y());
-                Log.d(LOG_TAG, transportsList.get(i).getDistance());
-                Log.d(LOG_TAG, transportsList.get(i).getIcon());
-                Log.d(LOG_TAG, String.valueOf(transportsList.get(i).getDrawableId()));
-                Log.d(LOG_TAG, " ");
-            }
         }
     }
 
@@ -88,6 +74,12 @@ public class ResultActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(transportsJsonStr);
             JSONArray jsonArray = jsonObject.getJSONArray("stations");
+
+            // user input is wrong. no transport information from the API
+            if(jsonArray.length() == 0){
+                Transport transport = new Transport("your input is wrong. please go back and enter a valid location.");
+                transportsList.add(transport);
+            }
 
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject stationInfo = jsonArray.getJSONObject(i);

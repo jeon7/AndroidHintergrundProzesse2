@@ -12,6 +12,9 @@ public class Transport {
     private String icon;
     private int drawableId;
 
+    public Transport(String name){
+        this.name = name;
+    }
 
     public Transport(String id, String name, String score, String coordinate_type, String coordinate_x, String coordinate_y,
                      String distance, String icon, int drawableId) {
